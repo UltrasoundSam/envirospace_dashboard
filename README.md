@@ -28,11 +28,13 @@ EnviroSpace Monitor
  EnviroSpace Dashboard
        │
        ├── Data Ingestion
-       ├── Database Storage
-       └── Dashboard Interface
+       └── Database Storage
        │
        ▼
       MariaDB
+       │
+       ▼
+      Dashboard Interface
 ```
 
 ## Database Structure
@@ -44,7 +46,7 @@ The application currently uses the following core tables:
 Stores monitored locations.
 
 | Field | Description |
-|---------|-------------|
+| ----- | ----------- |
 | id | Unique location identifier |
 | room_name | Human-readable room name |
 | room_code | Unique room identifier |
@@ -54,7 +56,7 @@ Stores monitored locations.
 Stores environmental measurements received from sensor nodes.
 
 | Field | Description |
-|---------|-------------|
+| ----- | ----------- |
 | id | Reading identifier |
 | device_id | Sensor device identifier |
 | recorded_at | Reading timestamp |
@@ -105,6 +107,10 @@ Start the dashboard:
 ```bash
 uv run streamlit run src/envirospace_dashboard/dashboard.py
 ```
+
+A screenshot of the dashboard interface can be seen below.
+
+![Dashboard Screenshot](./images/DashboardScreenshot.png)
 
 The dashboard reads database settings from `.env`:
 
