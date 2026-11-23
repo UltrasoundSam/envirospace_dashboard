@@ -100,10 +100,26 @@ Install dependencies:
 uv sync
 ```
 
-Run the application:
+Start the dashboard:
 
 ```bash
-uv run main.py
+uv run streamlit run src/envirospace_dashboard/dashboard.py
+```
+
+The dashboard reads database settings from `.env`:
+
+```text
+DB_HOST=...
+DB_PORT=3306
+DB_USER=...
+DB_PASSWORD=...
+DB_DATABASE=...
+```
+
+Start the MQTT ingestion process separately:
+
+```bash
+uv run python scripts/db_ingestion.py
 ```
 
 ## Roadmap

@@ -1,17 +1,17 @@
 """Handles connection to database"""
 
 import logging
-from datetime import datetime
+from datetime import date, datetime, time, timedelta
 from typing import Any
 
 import pymysql
 
-from .ingestion.settings import Settings
+from .ingestion.settings import DatabaseSettings
 
 logger = logging.getLogger(__name__)
 
 
-def connect_to_db(settings: Settings) -> pymysql.Connection | None:
+def connect_to_db(settings: DatabaseSettings) -> pymysql.Connection | None:
     try:
         return pymysql.connect(
             host=settings.db_host,
@@ -23,6 +23,43 @@ def connect_to_db(settings: Settings) -> pymysql.Connection | None:
     except pymysql.Error:
         logger.exception("Error connecting to MariaDB")
         return None
+
+
+def get_device_ids(connection: pymysql.Connection) -> list[str]:
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+            "SELECT DISTINCT device_id FROM readings "
+            "WHERE device_id IS NOT NULL ORDER BY device_id"
+        )
+        return [row[0] for row in cursor.fetchall()]
+    finally:
+        cursor.close()
+
+
+def get_readings(
+    connection: pymysql.Connection,
+    device_id: str,
+    start_date: date,
+    end_date: date,
+) -> list[tuple[Any, ...]]:
+    if end_date < start_date:
+        raise ValueError("end_date must be on or after start_date")
+
+    start_at = datetime.combine(start_date, time.min)
+    end_before = datetime.combine(end_date + timedelta(days=1), time.min)
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+            """SELECT recorded_at, temperature, humidity, noise, light_lux, pressure
+               FROM readings
+               WHERE device_id = %s AND recorded_at >= %s AND recorded_at < %s
+               ORDER BY recorded_at""",
+            (device_id, start_at, end_before),
+        )
+        return list(cursor.fetchall())
+    finally:
+        cursor.close()
 
 
 def insert_reading(

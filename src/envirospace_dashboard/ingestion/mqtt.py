@@ -10,9 +10,9 @@ from typing import Any
 import paho.mqtt.client as mqtt
 import pymysql
 
-from envirospace_dashboard import ReadingBuffer, Settings
 from envirospace_dashboard.database import insert_reading
-from envirospace_dashboard.ingestion.buffer import parse_timestamp
+from envirospace_dashboard.ingestion.buffer import ReadingBuffer, parse_timestamp
+from envirospace_dashboard.ingestion.settings import Settings
 
 logger = logging.getLogger(__name__)
 
