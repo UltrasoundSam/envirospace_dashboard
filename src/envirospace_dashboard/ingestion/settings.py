@@ -1,20 +1,19 @@
-'''File for handling all settings and config parameters'''
-from dataclasses import dataclass
+"""File for handling all settings and config parameters"""
+
 import os
+from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
 
 def require_env(name: str) -> str:
-    '''Simple helper function that validates that
+    """Simple helper function that validates that
     env value is there, not None
-    '''
+    """
     value = os.getenv(name)
 
     if not value:
-        raise ValueError(
-            f"Missing required environment variable: {name}"
-        )
+        raise ValueError(f"Missing required environment variable: {name}")
 
     return value
 
@@ -32,7 +31,7 @@ class Settings:
     db_database: str
 
     @classmethod
-    def from_env(cls) -> "Settings":
+    def from_env(cls) -> Settings:
         load_dotenv()
 
         return cls(

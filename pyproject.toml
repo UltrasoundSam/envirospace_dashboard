@@ -1,6 +1,6 @@
 [project]
 name = "envirospace-dashboard"
-version = "0.1.1"
+version = "0.1.2"
 description = "Repo for data ingestion and dashboard set up for INC Lab Simulus Campus Map. Sister Repo to https://github.com/UltrasoundSam/envirospace_monitor"
 readme = "README.md"
 authors = [
@@ -19,3 +19,9 @@ envirospace-dashboard = "envirospace_dashboard:main"
 [build-system]
 requires = ["uv_build>=0.13.7,<0.14.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "ruff>=0.17.6",
+]

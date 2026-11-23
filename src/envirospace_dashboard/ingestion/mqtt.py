@@ -1,14 +1,16 @@
-'''Handles orchestration - getting data from MQTT and putting
+"""Handles orchestration - getting data from MQTT and putting
 it in database
-'''
+"""
+
+import json
+import logging
 from datetime import timedelta
 from typing import Any
+
 import paho.mqtt.client as mqtt
 import pymysql
-import logging
-import json
 
-from envirospace_dashboard import Settings, ReadingBuffer
+from envirospace_dashboard import ReadingBuffer, Settings
 from envirospace_dashboard.database import insert_reading
 from envirospace_dashboard.ingestion.buffer import parse_timestamp
 
@@ -20,10 +22,7 @@ API_VERSION = mqtt.CallbackAPIVersion.VERSION2  # type: ignore
 
 class IngestionSubscriber:
     def __init__(
-        self,
-        settings: Settings,
-        connection: pymysql.Connection,
-        TTL: timedelta
+        self, settings: Settings, connection: pymysql.Connection, TTL: timedelta
     ) -> None:
         self.settings = settings
         self.connection = connection
@@ -77,7 +76,7 @@ class IngestionSubscriber:
             raw_timestamp = payload["timestamp"]
             value = payload["value"]
             recorded_at = parse_timestamp(raw_timestamp)
-        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+        except json.JSONDecodeError, KeyError, TypeError, ValueError:
             logger.exception("Invalid MQTT payload on topic %s", msg.topic)
             return
 

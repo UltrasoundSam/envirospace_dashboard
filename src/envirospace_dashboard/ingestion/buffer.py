@@ -1,15 +1,15 @@
-'''Handles data buffering so that all measurements are captured at
+"""Handles data buffering so that all measurements are captured at
 the same time, meaning everything can be written to database
 with single write.
-'''
+"""
+
 import threading
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Any
 
 BUFFER_TTL = timedelta(minutes=5)
-EXPECTED_SENSORS = frozenset({"temperature", "humidity",
-                              "noise", "light", "pressure"})
+EXPECTED_SENSORS = frozenset({"temperature", "humidity", "noise", "light", "pressure"})
 
 
 class ReadingBuffer:
@@ -22,11 +22,9 @@ class ReadingBuffer:
         )
         self._lock = threading.Lock()
 
-    def add(self,
-            device_id: str,
-            recorded_at: datetime,
-            sensor_type: str,
-            value: Any) -> dict[str, Any] | None:
+    def add(
+        self, device_id: str, recorded_at: datetime, sensor_type: str, value: Any
+    ) -> dict[str, Any] | None:
         timestamp = recorded_at.replace(microsecond=0).isoformat()
 
         with self._lock:
@@ -65,10 +63,9 @@ class ReadingBuffer:
 
     def size(self) -> int:
         with self._lock:
-            return sum(len(timestamps)
-                       for timestamps in self._readings.values())
+            return sum(len(timestamps) for timestamps in self._readings.values())
 
 
 def parse_timestamp(raw_timestamp: str) -> datetime:
-    parsed = datetime.fromisoformat(raw_timestamp.replace("Z", "+00:00"))
+    parsed = datetime.fromisoformat(raw_timestamp)
     return parsed.replace(tzinfo=None)

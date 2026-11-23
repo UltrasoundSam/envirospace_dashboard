@@ -1,9 +1,10 @@
-'''Handles connection to database'''
-import logging
-from typing import Any
-import pymysql
+"""Handles connection to database"""
 
+import logging
 from datetime import datetime
+from typing import Any
+
+import pymysql
 
 from .ingestion.settings import Settings
 
@@ -47,8 +48,7 @@ def insert_reading(
             ),
         )
         connection.commit()
-        logger.info("Inserted reading: %s @ %s",
-                    device_id, recorded_at.isoformat())
+        logger.info("Inserted reading: %s @ %s", device_id, recorded_at.isoformat())
         return True
     except pymysql.Error:
         connection.rollback()

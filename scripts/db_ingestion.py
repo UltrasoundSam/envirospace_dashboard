@@ -1,6 +1,5 @@
 """MQTT to MariaDB subscriber for EnviroSpace sensor data."""
 
-
 import logging
 import os
 import signal
@@ -8,7 +7,7 @@ import threading
 from datetime import timedelta
 from typing import Any
 
-from envirospace_dashboard import Settings, IngestionSubscriber
+from envirospace_dashboard import IngestionSubscriber, Settings
 from envirospace_dashboard.database import connect_to_db
 
 BUFFER_TTL = timedelta(minutes=5)
@@ -35,9 +34,7 @@ def main() -> int:
         return 1
 
     # Create subscriber
-    subscriber = IngestionSubscriber(settings,
-                                     connection,
-                                     BUFFER_TTL)
+    subscriber = IngestionSubscriber(settings, connection, BUFFER_TTL)
 
     # Register shutdown handlers
     stop_requested = threading.Event()
