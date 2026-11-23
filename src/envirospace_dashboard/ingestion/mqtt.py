@@ -76,7 +76,7 @@ class IngestionSubscriber:
             raw_timestamp = payload["timestamp"]
             value = payload["value"]
             recorded_at = parse_timestamp(raw_timestamp)
-        except json.JSONDecodeError, KeyError, TypeError, ValueError:
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
             logger.exception("Invalid MQTT payload on topic %s", msg.topic)
             return
 
