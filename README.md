@@ -28,11 +28,13 @@ EnviroSpace Monitor
  EnviroSpace Dashboard
        │
        ├── Data Ingestion
-       ├── Database Storage
-       └── Dashboard Interface
+       └── Database Storage
        │
        ▼
       MariaDB
+       │
+       ▼
+      Dashboard Interface
 ```
 
 ## Database Structure
@@ -44,7 +46,7 @@ The application currently uses the following core tables:
 Stores monitored locations.
 
 | Field | Description |
-|---------|-------------|
+| ----- | ----------- |
 | id | Unique location identifier |
 | room_name | Human-readable room name |
 | room_code | Unique room identifier |
@@ -54,7 +56,7 @@ Stores monitored locations.
 Stores environmental measurements received from sensor nodes.
 
 | Field | Description |
-|---------|-------------|
+| ----- | ----------- |
 | id | Reading identifier |
 | device_id | Sensor device identifier |
 | recorded_at | Reading timestamp |
@@ -100,10 +102,30 @@ Install dependencies:
 uv sync
 ```
 
-Run the application:
+Start the dashboard:
 
 ```bash
-uv run main.py
+uv run streamlit run src/envirospace_dashboard/dashboard.py
+```
+
+A screenshot of the dashboard interface can be seen below.
+
+![Dashboard Screenshot](./images/DashboardScreenshot.png)
+
+The dashboard reads database settings from `.env`:
+
+```text
+DB_HOST=...
+DB_PORT=3306
+DB_USER=...
+DB_PASSWORD=...
+DB_DATABASE=...
+```
+
+Start the MQTT ingestion process separately:
+
+```bash
+uv run python scripts/db_ingestion.py
 ```
 
 ## Roadmap
