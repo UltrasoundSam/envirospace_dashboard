@@ -4,6 +4,8 @@ import logging
 from datetime import date, timedelta
 
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 import pymysql
 import streamlit as st
 
@@ -31,6 +33,25 @@ MEASUREMENTS = {
     "light_lux": ("Light", "lux"),
     "pressure": ("Pressure", "hPa"),
 }
+
+
+def build_trend_figure(
+    frame: pd.DataFrame,
+    measurement: str,
+) -> go.Figure:
+    measurement_label, unit = MEASUREMENTS[measurement]
+    figure = px.line(
+        frame,
+        x="recorded_at",
+        y=measurement,
+        labels={
+            "recorded_at": "Recorded at",
+            measurement: f"{measurement_label} ({unit})" if unit else measurement_label,
+        },
+        title=f"{measurement_label} over time",
+    )
+    figure.update_layout(dragmode="zoom")
+    return figure
 
 
 def main() -> None:
@@ -103,13 +124,16 @@ def main() -> None:
         options=list(MEASUREMENTS),
         format_func=lambda key: MEASUREMENTS[key][0],
     )
-    measurement_label, unit = MEASUREMENTS[selected_measurement]
-    st.line_chart(
-        frame,
-        x="recorded_at",
-        y=selected_measurement,
-        y_label=f"{measurement_label} ({unit})" if unit else measurement_label,
+    st.plotly_chart(
+        build_trend_figure(frame, selected_measurement),
+        config={
+            "displaylogo": False,
+            "scrollZoom": True,
+            "modeBarButtonsToAdd": ["select2d"],
+        },
+        width="stretch",
     )
+    st.caption("Drag over the chart to zoom; double-click to reset the view.")
 
     st.subheader("Readings")
     st.dataframe(frame, hide_index=True, width="stretch")

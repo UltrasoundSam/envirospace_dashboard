@@ -1,6 +1,9 @@
 from datetime import date, datetime
 from typing import Any
 
+import pandas as pd
+
+from envirospace_dashboard.dashboard import build_trend_figure
 from envirospace_dashboard.database import get_readings
 
 
@@ -46,3 +49,17 @@ def test_get_readings_includes_the_full_end_date() -> None:
         datetime(2026, 11, 8),
     )
     assert connection.fake_cursor.closed
+
+
+def test_trend_figure_uses_drag_to_zoom() -> None:
+    frame = pd.DataFrame(
+        {
+            "recorded_at": [datetime(2026, 11, 1), datetime(2026, 11, 2)],
+            "temperature": [20.0, 21.0],
+        }
+    )
+
+    figure = build_trend_figure(frame, "temperature")
+
+    assert figure.layout.dragmode == "zoom"
+    assert figure.layout.title.text == "Temperature over time"
